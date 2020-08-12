@@ -1,0 +1,127 @@
+service: wonderq-api-message-queue
+provider:
+  name: aws
+  runtime: nodejs12.x
+  memorySize: 2048 #MB
+  timeout: 30 #seconds
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+       - dynamodb:Query
+       - dynamodb:Scan
+       - dynamodb:GetItem
+       - dynamodb:PutItem
+       - dynamodb:UpdateItem
+       - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:us-east-1:126936759995:table/Message"
+  stage: ${opt:stage}
+  region: ${opt:region}
+#  environment:
+#    variable1: value1
+functions:
+  hello:
+    handler: index.hello
+    events:
+      - http: 
+          path: hello
+          method: get
+          cors:
+            origin: '*' 
+            headers: 
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - AccessToken
+          integration: lambda
+  scanAll:
+    handler: index.scanAll
+    events:
+      - http: 
+          path: scanAll
+          method: get
+          cors:
+            origin: '*' 
+            headers: 
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+              - AccessToken
+          integration: lambda
+  writeMessage:
+      handler: index.writeMessage
+      events:
+        - http: 
+            path: writeMessage
+            method: post
+            cors:
+              origin: '*' 
+              headers: 
+                - Content-Type
+                - X-Amz-Date
+                - Authorization
+                - X-Api-Key
+                - X-Amz-Security-Token
+                - X-Amz-User-Agent
+                - AccessToken
+            integration: lambda  
+  updateItems:
+      handler: index.updateItems
+      events:
+        - http: 
+            path: updateItems
+            method: post
+            cors:
+              origin: '*' 
+              headers: 
+                - Content-Type
+                - X-Amz-Date
+                - Authorization
+                - X-Api-Key
+                - X-Amz-Security-Token
+                - X-Amz-User-Agent
+                - AccessToken
+            integration: lambda   
+  fetchItems:
+      handler: index.fetchItems
+      events:
+        - http: 
+            path: fetchItems
+            method: get
+            cors:
+              origin: '*' 
+              headers: 
+                - Content-Type
+                - X-Amz-Date
+                - Authorization
+                - X-Api-Key
+                - X-Amz-Security-Token
+                - X-Amz-User-Agent
+                - AccessToken
+            integration: lambda              
+  cleanStuckItems:
+      handler: index.cleanStuckItems
+      events:
+        - http: 
+            path: cleanStuckItems
+            method: get
+            cors:
+              origin: '*' 
+              headers: 
+                - Content-Type
+                - X-Amz-Date
+                - Authorization
+                - X-Api-Key
+                - X-Amz-Security-Token
+                - X-Amz-User-Agent
+                - AccessToken
+            integration: lambda              
+        - schedule: 
+            name: wonderq-api-message-queue-${opt:stage}-cleanStuckItems
+            rate: rate(60 minutes)
+            enabled: true
