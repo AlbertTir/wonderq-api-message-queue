@@ -131,7 +131,7 @@ const updateItems = async (items, status) => {
 // fetches N number of items for consumers on page load
 module.exports.fetchItems = async (event) => {
   console.log("Fetching items.");
-  let limit = !event.query ? 3 : event.query.limit;
+  let limit = !event.query.limit ? 3 : event.query.limit;
 
   let params = {
     TableName: "Message",
